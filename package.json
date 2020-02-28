@@ -1,0 +1,13 @@
+{
+  "name": "g",
+  "version": "1.0.0",
+  "description": "Generator CLI",
+  "main": "index.js",
+  "author": "Jesus Alfredo Pacheco Figueroa",
+  "license": "ISC",
+  "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
+    "yargs": "^15.1.0"
+  },
+  "private": true
+}
