@@ -1,6 +1,6 @@
 {
   "name": "g",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generator CLI",
   "main": "index.js",
   "author": "Jesus Alfredo Pacheco Figueroa",
