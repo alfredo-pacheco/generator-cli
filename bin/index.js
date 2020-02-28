@@ -20,7 +20,7 @@ require('yargs')
   .help().argv;
 
 const args = require('yargs').argv;
-const { get, post } = require('./http');
+const { get, post } = require('../http');
 
 const command = args._[0];
 const name = args._[1] || null;
