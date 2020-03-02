@@ -43,7 +43,19 @@ switch (command) {
     break;
   case 'frontend':
   case 'f':
-    console.log(`frontend ${name}`);
+    if (name) {
+      post(`/Generator/RunApplication/${name}`)
+        .then(response => {
+          console.log('Done.');
+          // console.log(response);
+        })
+        .catch(err => {
+          console.log('err');
+          console.log(err);
+        });
+    } else {
+      console.log(`Invalid frontend name.`);
+    }
     break;
   case 'entity':
   case 'e':
@@ -51,7 +63,32 @@ switch (command) {
     break;
   case 'component':
   case 'c':
-    console.log(`component ${name}`);
+    const appName = args._[2] || null;
+    if (name && appName) {
+      post(`/Generator/RunComponent/${appName}/${name}`)
+        .then(response => {
+          console.log('Done.');
+          // console.log(response);
+        })
+        .catch(err => {
+          console.log('err');
+          console.log(err);
+        });
+    } else {
+      console.log(`Invalid parameters.`);
+    }
+    break;
+  case 'cache':
+  case 'clearCache':
+    get(`/Generator/ClearCache`)
+      .then(response => {
+        console.log('Done.');
+        // console.log(response);
+      })
+      .catch(err => {
+        console.log('err');
+        console.log(err);
+      });
     break;
   case 'app':
   case 'a':
