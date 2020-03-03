@@ -34,7 +34,6 @@ switch (command) {
     post('/Generator/RunBackend')
       .then(response => {
         console.log('Done.');
-        // console.log(response);
       })
       .catch(err => {
         console.log('err');
@@ -43,19 +42,14 @@ switch (command) {
     break;
   case 'frontend':
   case 'f':
-    if (name) {
-      post(`/Generator/RunApplication/${name}`)
-        .then(response => {
-          console.log('Done.');
-          // console.log(response);
-        })
-        .catch(err => {
-          console.log('err');
-          console.log(err);
-        });
-    } else {
-      console.log(`Invalid frontend name.`);
-    }
+    post(`/Generator/RunFrontend`)
+      .then(response => {
+        console.log('Done.');
+      })
+      .catch(err => {
+        console.log('err');
+        console.log(err);
+      });
     break;
   case 'entity':
   case 'e':
@@ -68,7 +62,6 @@ switch (command) {
       post(`/Generator/RunComponent/${appName}/${name}`)
         .then(response => {
           console.log('Done.');
-          // console.log(response);
         })
         .catch(err => {
           console.log('err');
@@ -83,7 +76,6 @@ switch (command) {
     get(`/Generator/ClearCache`)
       .then(response => {
         console.log('Done.');
-        // console.log(response);
       })
       .catch(err => {
         console.log('err');
@@ -92,8 +84,19 @@ switch (command) {
     break;
   case 'app':
   case 'a':
-    console.log(`app ${name}`);
+    if (name) {
+      post(`/Generator/RunApplication/${name}`)
+        .then(response => {
+          console.log('Done.');
+        })
+        .catch(err => {
+          console.log('err');
+          console.log(err);
+        });
+    } else {
+      console.log(`Invalid application name.`);
+    }
     break;
   default:
-    console.log(`default ${name}`);
+    console.log(`Display Help.`);
 }
