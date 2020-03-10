@@ -128,7 +128,7 @@ switch (command) {
   case 'component':
   case 'c':
     if (name && third) {
-      post(`/Generator/RunComponent/${appName}/${name}`)
+      post(`/Generator/RunComponent/${third}/${name}`)
         .then(response => {
           console.log('Done.');
         })
@@ -164,6 +164,20 @@ switch (command) {
         });
     } else {
       console.log(`Invalid application name.`);
+    }
+    break;
+  case 'pages':
+  case 'p':
+    if (name && third) {
+      post(`/Generator/RunPages/${name}/${third}`)
+        .then(response => {
+          console.log('Done.');
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      console.error(`Application Name and Frontend Name are required.`);
     }
     break;
   default:
