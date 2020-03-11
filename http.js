@@ -33,5 +33,11 @@ const Request = async (method, endpoint, data, BaseURL) => {
   }
 };
 
-module.exports.get = async (endpoint, baseURL) => await Request('GET', endpoint, null, baseURL);
-module.exports.post = async (endpoint, data, baseURL) => await Request('POST', endpoint, data, baseURL);
+module.exports.get = async (endpoint, baseURL) => {
+  await Request('GET', '/Generator/ClearCache', null, baseURL);
+  return await Request('GET', endpoint, null, baseURL);
+};
+module.exports.post = async (endpoint, data, baseURL) => {
+  await Request('GET', '/Generator/ClearCache', null, baseURL);
+  return await Request('POST', endpoint, data, baseURL);
+};

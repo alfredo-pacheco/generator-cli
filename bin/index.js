@@ -140,17 +140,6 @@ switch (command) {
       console.log(`Invalid parameters.`);
     }
     break;
-  case 'cache':
-  case 'clearCache':
-    get(`/Generator/ClearCache`)
-      .then(response => {
-        console.log('Done.');
-      })
-      .catch(err => {
-        console.log('err');
-        console.log(err);
-      });
-    break;
   case 'app':
   case 'a':
     if (name) {
