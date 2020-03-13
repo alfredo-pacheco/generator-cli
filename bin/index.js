@@ -21,16 +21,62 @@ require('yargs')
 
 const args = require('yargs').argv;
 const { get, post } = require('../http');
+const fs = require('fs');
+const configPath = require('os').homedir() + '/generator.cli.config.json';
 
 const command = args._[0];
+const first = command;
 const name = args._[1] || null;
+const second = name;
 const third = args._[2] || null;
 const fourth = args._[3] || null;
 
-// console.log(JSON.stringify(args, null, 3))
-// console.log(command, name)
+let config = {};
+let configFileContent = fs.readFileSync(configPath);
+if (configFileContent) {
+  config = JSON.parse(configFileContent);
+}
+
+let app;
 
 switch (command) {
+  case 'config':
+    switch (second) {
+      case 'app':
+        config.currentApp = third;
+        fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
+          if (err) {
+            console.log('Error: ', err);
+            return;
+          }
+          console.log('App saved.');
+        });
+        break;
+      case 'frontend':
+        config.currentFrontend = third;
+        fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
+          if (err) {
+            console.log('Error: ', err);
+            return;
+          }
+          console.log('Frontend saved.');
+        });
+        break;
+      case 'clear':
+        fs.writeFile(configPath, JSON.stringify({}, null, 2), function(err) {
+          if (err) {
+            console.log('Error: ', err);
+            return;
+          }
+          console.log('Configuration cleared.');
+        });
+        break;
+      default:
+        console.log(config);
+        break;
+    }
+
+    break;
   case 'get':
   case 'ls':
     switch (name) {
@@ -41,32 +87,36 @@ switch (command) {
         });
         break;
       case 'djson':
-        if (third)
-          get(`Generator/GetApplicationDJSON/${third}`).then(djson => {
+        app = third || config.currentApp;
+        if (app)
+          get(`Generator/GetApplicationDJSON/${app}`).then(djson => {
             console.log(JSON.stringify(djson, null, 3));
           });
         else console.error('Application Name required');
         break;
       case 'c':
       case 'components':
-        if (third)
-          get(`Generator/GetComponentsInApplication/${third}`).then(components => {
+        app = third || config.currentApp;
+        if (app)
+          get(`Generator/GetComponentsInApplication/${app}`).then(components => {
             console.log(components.map(a => a.Name).join('\n'));
           });
         else console.error('Application Name required');
         break;
       case 'e':
       case 'entities':
-        if (third)
-          get(`Generator/GetEntitiesInApplication/${third}`).then(entities => {
+        app = third || config.currentApp;
+        if (app)
+          get(`Generator/GetEntitiesInApplication/${app}`).then(entities => {
             console.log(entities.map(a => a.Name).join('\n'));
           });
         else console.error('Application Name required');
         break;
       case 'f':
       case 'frontends':
-        if (third)
-          get(`Generator/GetFrontendsInApplication/${third}`).then(frontends => {
+        app = third || config.currentApp;
+        if (app)
+          get(`Generator/GetFrontendsInApplication/${app}`).then(frontends => {
             console.log(
               frontends.map(f => {
                 let front = { ...f };
@@ -81,11 +131,58 @@ switch (command) {
         break;
       case 'p':
       case 'pages':
-        if (third && fourth)
-          get(`Generator/GetPagesInApplicationAndFrontend/${third}/${fourth}`).then(pages => {
+        app = third || config.currentApp;
+        frontend = fourth || config.currentFrontend;
+        if (app && frontend)
+          get(`Generator/GetPagesInApplicationAndFrontend/${app}/${frontend}`).then(pages => {
             console.log(pages);
           });
         else console.error('Application Name and Frontend Name required');
+        break;
+    }
+    break;
+  case 'create':
+  case 'new':
+  case 'n':
+    switch (second) {
+      case 'entity':
+      case 'e':
+        app = fourth || config.currentApp;
+        post('/Application/CreateEntity', {
+          Name: third,
+          Application: app
+        })
+          .then(() => {
+            console.log('Done');
+          })
+          .catch(ex => console.log(ex));
+        break;
+      case 'frontend':
+      case 'f':
+        app = fourth || config.currentApp;
+        post('/Application/CreateFrontend', {
+          Name: third,
+          Application: app
+        })
+          .then(() => {
+            console.log('Done');
+          })
+          .catch(ex => console.log(ex));
+        break;
+      case 'component':
+      case 'c':
+        app = fourth || config.currentApp;
+        post('/Application/CreateComponent', {
+          Name: third,
+          Application: app
+        })
+          .then(() => {
+            console.log('Done');
+          })
+          .catch(ex => console.log(ex));
+        break;
+      default:
+        console.log(`Create resource. Invalid Param: [${second}]. Available: entity (e), frontend (f), component (c)`);
         break;
     }
     break;
@@ -113,8 +210,9 @@ switch (command) {
     break;
   case 'entity':
   case 'e':
-    if (name && third) {
-      post(`/Generator/RunEntity/${third}/${name}`)
+    app = third || config.currentApp;
+    if (name && app) {
+      post(`/Generator/RunEntity/${app}/${name}`)
         .then(response => {
           console.log('Done');
         })
@@ -127,8 +225,9 @@ switch (command) {
     break;
   case 'component':
   case 'c':
-    if (name && third) {
-      post(`/Generator/RunComponent/${third}/${name}`)
+    app = third || config.currentApp;
+    if (name && app) {
+      post(`/Generator/RunComponent/${app}/${name}`)
         .then(response => {
           console.log('Done.');
         })
@@ -142,8 +241,9 @@ switch (command) {
     break;
   case 'app':
   case 'a':
-    if (name) {
-      post(`/Generator/RunApplication/${name}`)
+    app = name || config.currentApp;
+    if (app) {
+      post(`/Generator/RunApplication/${app}`)
         .then(response => {
           console.log('Done.');
         })
@@ -157,8 +257,10 @@ switch (command) {
     break;
   case 'pages':
   case 'p':
-    if (name && third) {
-      post(`/Generator/RunPages/${name}/${third}`)
+    app = name || config.currentApp;
+    frontend = third || config.currentFrontend;
+    if (app && frontend) {
+      post(`/Generator/RunPages/${app}/${frontend}`)
         .then(response => {
           console.log('Done.');
         })
