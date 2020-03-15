@@ -38,6 +38,7 @@ function runCommand(first, second, third, fourth) {
     case 'config':
       switch (second) {
         case 'app':
+        case 'a':
           config.currentApp = third;
           fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
             if (err) {
@@ -48,6 +49,7 @@ function runCommand(first, second, third, fourth) {
           });
           break;
         case 'frontend':
+        case 'f':
           config.currentFrontend = third;
           fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
             if (err) {
@@ -199,14 +201,26 @@ function runCommand(first, second, third, fourth) {
       break;
     case 'backend':
     case 'b':
-      post('/Generator/RunBackend')
-        .then(() => console.log('All Backends of all enabled Applications generated.'))
+      app = third || config.currentApp;
+      post('/Generator/RunBackend', {
+        ApplicationName: app
+      })
+        .then(() => {
+          if (app) console.log(`[${app}] Backend generated.`);
+          else console.log('All Backends for all outdated Applications generated.');
+        })
         .catch(err => console.error(err));
       break;
     case 'frontend':
     case 'f':
-      post(`/Generator/RunFrontend`)
-        .then(() => console.log('All Frontends of all enabled Applications generated.'))
+      app = third || config.currentApp;
+      post(`/Generator/RunFrontend`, {
+        ApplicationName: app
+      })
+        .then(() => {
+          if (app) console.log(`[${app}] Frontend generated.`);
+          else console.log('All Frontends for all outdated Applications generated.');
+        })
         .catch(err => console.error(err));
       break;
     case 'entity':
@@ -214,7 +228,7 @@ function runCommand(first, second, third, fourth) {
       app = third || config.currentApp;
       if (second && app) {
         post(`/Generator/RunEntity/${app}/${second}`)
-          .then(() => console.log(`[${second}] Entity generated of application: [${app}]`))
+          .then(() => console.log(`[${second}] Entity generated for Application: [${app}]`))
           .catch(err => console.error(err));
       } else console.log(`Entity Name and Application Name required.`);
       break;
@@ -223,7 +237,7 @@ function runCommand(first, second, third, fourth) {
       app = third || config.currentApp;
       if (second && app) {
         post(`/Generator/RunComponent/${app}/${second}`)
-          .then(() => console.log(`[${second}] Component generated of application: [${app}]`))
+          .then(() => console.log(`[${second}] Component generated for Application: [${app}]`))
           .catch(err => console.error('err'));
       } else console.error(`Invalid parameters.`);
       break;
@@ -234,7 +248,7 @@ function runCommand(first, second, third, fourth) {
         post(`/Generator/RunApplication/${app}`)
           .then(() => console.log(`[${app}] Application generated.`))
           .catch(err => console.error(err));
-      } else console.error(`Invalid application name.`);
+      } else console.error(`Invalid Application name.`);
       break;
     case 'pages':
     case 'p':
@@ -242,7 +256,7 @@ function runCommand(first, second, third, fourth) {
       frontend = third || config.currentFrontend;
       if (app && frontend) {
         post(`/Generator/RunPages/${app}/${frontend}`)
-          .then(() => console.log(`[${frontend}] Frontend generated of Application: [${app}]`))
+          .then(() => console.log(`[${frontend}] Frontend generated for Application: [${app}]`))
           .catch(err => console.error(err));
       } else console.error(`Application Name and Frontend Name are required.`);
       break;
