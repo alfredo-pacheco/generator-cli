@@ -20,7 +20,7 @@ require('yargs')
   .help().argv;
 
 const args = require('yargs').argv;
-const { get, post } = require('../http');
+const { get, post, setURL } = require('../http');
 const fs = require('fs');
 const configPath = require('os').homedir() + '/generator.cli.config.json';
 
@@ -37,6 +37,17 @@ function runCommand(first, second, third, fourth) {
   switch (command) {
     case 'config':
       switch (second) {
+        case 'url':
+          config.GeneratorURL = third;
+          fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
+            if (err) {
+              console.error('Error: ', err);
+              return;
+            }
+            setURL(third);
+            console.log(`[${third}] Generator URL configured.`);
+          });
+          break;
         case 'app':
         case 'a':
           config.currentApp = third;
