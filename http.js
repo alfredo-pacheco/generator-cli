@@ -7,7 +7,6 @@ let cliConfig = {};
 let configFileContent = fs.readFileSync(configPath);
 if (configFileContent) {
   cliConfig = JSON.parse(configFileContent);
-  console.log(cliConfig)
 }
 
 const Request = async (method, endpoint, data, BaseURL) => {
@@ -25,7 +24,6 @@ const Request = async (method, endpoint, data, BaseURL) => {
     body: null
   };
   if (['POST', 'PUT', 'DELETE'].includes(method)) config.body = JSON.stringify(data);
-  console.log('url: ', cliConfig.GeneratorURL)
   let response = await fetch((BaseURL || cliConfig.GeneratorURL) + endpoint, config);
   if (response) {
     if (!response.ok) throw await response.json();

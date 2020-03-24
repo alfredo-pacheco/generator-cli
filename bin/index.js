@@ -200,8 +200,8 @@ function runCommand(first, second, third, fourth) {
             Application: app
           })
             .then(() => {
-              console.log('Done');
-              runCommand(`[${third}] Component created`);
+              console.log(`[${third}] Component created`);
+              // runCommand('c', third); //Need to specify Entity and Type first.
             })
             .catch(ex => console.error(ex));
           break;
@@ -249,7 +249,7 @@ function runCommand(first, second, third, fourth) {
       if (second && app) {
         post(`/Generator/RunComponent/${app}/${second}`)
           .then(() => console.log(`[${second}] Component generated for Application: [${app}]`))
-          .catch(err => console.error('err'));
+          .catch(err => console.error(err));
       } else console.error(`Invalid parameters.`);
       break;
     case 'app':
@@ -267,7 +267,7 @@ function runCommand(first, second, third, fourth) {
       frontend = third || config.currentFrontend;
       if (app && frontend) {
         post(`/Generator/RunPages/${app}/${frontend}`)
-          .then(() => console.log(`[${frontend}] Frontend generated for Application: [${app}]`))
+          .then(() => console.log(`[${frontend}] Pages generated for Application: [${app}]`))
           .catch(err => console.error(err));
       } else console.error(`Application Name and Frontend Name are required.`);
       break;
