@@ -13,7 +13,7 @@ require('yargs')
         describe: 'the name to say hello to'
       });
     },
-    function(argv) {
+    function (argv) {
       console.log('hello', argv.name, 'welcome to yargs!');
     }
   )
@@ -39,7 +39,7 @@ function runCommand(first, second, third, fourth) {
       switch (second) {
         case 'url':
           config.GeneratorURL = third;
-          fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
+          fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
             if (err) {
               console.error('Error: ', err);
               return;
@@ -51,7 +51,7 @@ function runCommand(first, second, third, fourth) {
         case 'app':
         case 'a':
           config.currentApp = third;
-          fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
+          fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
             if (err) {
               console.error('Error: ', err);
               return;
@@ -62,7 +62,7 @@ function runCommand(first, second, third, fourth) {
         case 'frontend':
         case 'f':
           config.currentFrontend = third;
-          fs.writeFile(configPath, JSON.stringify(config, null, 2), function(err) {
+          fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
             if (err) {
               console.error('Error: ', err);
               return;
@@ -71,7 +71,7 @@ function runCommand(first, second, third, fourth) {
           });
           break;
         case 'clear':
-          fs.writeFile(configPath, JSON.stringify({}, null, 2), function(err) {
+          fs.writeFile(configPath, JSON.stringify({}, null, 2), function (err) {
             if (err) {
               console.error('Error: ', err);
               return;
@@ -214,7 +214,8 @@ function runCommand(first, second, third, fourth) {
     case 'b':
       app = third || config.currentApp;
       post('/Generator/RunBackend', {
-        ApplicationName: app
+        ApplicationName: app,
+        Force: args.force || null
       })
         .then(() => {
           if (app) console.log(`[${app}] Backend generated.`);
@@ -226,7 +227,8 @@ function runCommand(first, second, third, fourth) {
     case 'f':
       app = third || config.currentApp;
       post(`/Generator/RunFrontend`, {
-        ApplicationName: app
+        ApplicationName: app,
+        Force: args.force || null
       })
         .then(() => {
           if (app) console.log(`[${app}] Frontend generated.`);
@@ -238,7 +240,9 @@ function runCommand(first, second, third, fourth) {
     case 'e':
       app = third || config.currentApp;
       if (second && app) {
-        post(`/Generator/RunEntity/${app}/${second}`)
+        post(`/Generator/RunEntity/${app}/${second}`, {
+          Force: args.force || null
+        })
           .then(() => console.log(`[${second}] Entity generated for Application: [${app}]`))
           .catch(err => console.error(err));
       } else console.log(`Entity Name and Application Name required.`);
@@ -247,7 +251,9 @@ function runCommand(first, second, third, fourth) {
     case 'c':
       app = third || config.currentApp;
       if (second && app) {
-        post(`/Generator/RunComponent/${app}/${second}`)
+        post(`/Generator/RunComponent/${app}/${second}`, {
+          Force: args.force || null
+        })
           .then(() => console.log(`[${second}] Component generated for Application: [${app}]`))
           .catch(err => console.error(err));
       } else console.error(`Invalid parameters.`);
@@ -256,7 +262,9 @@ function runCommand(first, second, third, fourth) {
       app = second || config.currentApp;
       frontend = third || config.currentFrontend;
       if (app && frontend) {
-        post(`/Generator/RunComponents/${app}/${frontend}`)
+        post(`/Generator/RunComponents/${app}/${frontend}`, {
+          Force: args.force || null
+        })
           .then(() => console.log(`[${frontend}] All Components generated for Application: [${app}]`))
           .catch(err => console.error(err));
       } else console.error(`Application Name and Frontend Name are required.`);
@@ -265,7 +273,9 @@ function runCommand(first, second, third, fourth) {
     case 'a':
       app = second || config.currentApp;
       if (app) {
-        post(`/Generator/RunApplication/${app}`)
+        post(`/Generator/RunApplication/${app}`, {
+          Force: args.force || null
+        })
           .then(() => console.log(`[${app}] Application generated.`))
           .catch(err => console.error(err));
       } else console.error(`Invalid Application name.`);
@@ -275,7 +285,9 @@ function runCommand(first, second, third, fourth) {
       app = second || config.currentApp;
       frontend = third || config.currentFrontend;
       if (app && frontend) {
-        post(`/Generator/RunPages/${app}/${frontend}`)
+        post(`/Generator/RunPages/${app}/${frontend}`, {
+          Force: args.force || null
+        })
           .then(() => console.log(`[${frontend}] All Pages generated for Application: [${app}]`))
           .catch(err => console.error(err));
       } else console.error(`Application Name and Frontend Name are required.`);
