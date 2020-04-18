@@ -30,6 +30,11 @@ if (configFileContent) {
   config = JSON.parse(configFileContent);
 }
 
+var force = args.force || config.forceMode || false;
+if (force) {
+  console.log('Force: ' + force);
+}
+
 function runCommand(first, second, third, fourth) {
   let app;
   const command = first;
@@ -79,11 +84,20 @@ function runCommand(first, second, third, fourth) {
             console.log('Configuration cleared.');
           });
           break;
+        case 'force':
+          config.forceMode = !config.forceMode;
+          fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
+            if (err) {
+              console.error('Error: ', err);
+              return;
+            }
+            console.log(`[Force Mode] toggled to ${config.forceMode}`);
+          });
+          break;
         default:
           console.log(config);
           break;
       }
-
       break;
     case 'get':
     case 'ls':
@@ -215,7 +229,7 @@ function runCommand(first, second, third, fourth) {
       app = third || config.currentApp;
       post('/Generator/RunBackend', {
         ApplicationName: app,
-        Force: args.force || null
+        force
       })
         .then(() => {
           if (app) console.log(`[${app}] Backend generated.`);
@@ -228,7 +242,7 @@ function runCommand(first, second, third, fourth) {
       app = third || config.currentApp;
       post(`/Generator/RunFrontend`, {
         ApplicationName: app,
-        Force: args.force || null
+        force
       })
         .then(() => {
           if (app) console.log(`[${app}] Frontend generated.`);
@@ -241,7 +255,7 @@ function runCommand(first, second, third, fourth) {
       app = third || config.currentApp;
       if (second && app) {
         post(`/Generator/RunEntity/${app}/${second}`, {
-          Force: args.force || null
+          force
         })
           .then(() => console.log(`[${second}] Entity generated for Application: [${app}]`))
           .catch(err => console.error(err));
@@ -252,7 +266,7 @@ function runCommand(first, second, third, fourth) {
       app = third || config.currentApp;
       if (second && app) {
         post(`/Generator/RunComponent/${app}/${second}`, {
-          Force: args.force || null
+          force
         })
           .then(() => console.log(`[${second}] Component generated for Application: [${app}]`))
           .catch(err => console.error(err));
@@ -263,7 +277,7 @@ function runCommand(first, second, third, fourth) {
       frontend = third || config.currentFrontend;
       if (app && frontend) {
         post(`/Generator/RunComponents/${app}/${frontend}`, {
-          Force: args.force || null
+          force
         })
           .then(() => console.log(`[${frontend}] All Components generated for Application: [${app}]`))
           .catch(err => console.error(err));
@@ -274,7 +288,7 @@ function runCommand(first, second, third, fourth) {
       app = second || config.currentApp;
       if (app) {
         post(`/Generator/RunApplication/${app}`, {
-          Force: args.force || null
+          force
         })
           .then(() => console.log(`[${app}] Application generated.`))
           .catch(err => console.error(err));
@@ -286,7 +300,7 @@ function runCommand(first, second, third, fourth) {
       frontend = third || config.currentFrontend;
       if (app && frontend) {
         post(`/Generator/RunPages/${app}/${frontend}`, {
-          Force: args.force || null
+          force
         })
           .then(() => console.log(`[${frontend}] All Pages generated for Application: [${app}]`))
           .catch(err => console.error(err));
