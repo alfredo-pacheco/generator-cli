@@ -10,6 +10,6 @@
     "yargs": "^15.1.0"
   },
   "bin": {
-    "g": "bin/index.js"
+    "c": "bin/index.js"
   }
 }
