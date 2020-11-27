@@ -1,48 +1,51 @@
 #!/usr/bin/env node
 
-require('yargs')
-  .scriptName('pirate-parser')
-  .usage('$0 <cmd> [args]')
-  .command(
-    'hello [name]',
-    'welcome ter yargs!',
-    yargs => {
-      yargs.positional('name', {
-        type: 'string',
-        default: 'Cambi',
-        describe: 'the name to say hello to'
-      });
-    },
-    function (argv) {
-      console.log('hello', argv.name, 'welcome to yargs!');
-    }
-  )
-  .help().argv;
+process.env.CLI_BIN_ROOT = __dirname;
 
-const args = require('yargs').argv;
-const { get, post, setURL } = require('../http');
-const fs = require('fs');
-const configPath = require('os').homedir() + '/generator.cli.config.json';
+global.requireFromRoot = package => require(`${process.env.CLI_BIN_ROOT}/${package}`)
 
 let config = {};
-let configFileContent = fs.readFileSync(configPath);
-if (configFileContent) {
-  config = JSON.parse(configFileContent);
-}
+//let configFileContent = null;
+
+const { get, post, setURL } = require('../http');
+
+// TODO: force command:
+/*
 
 var force = args.force || config.forceMode || false;
 if (force) {
   console.log('Force: ' + force);
 }
 
+
+
+const { exec } = require("child_process");
+exec(`${process.env.CLI_BIN_ROOT}/index.js --help`, (error, stdout, stderr)=>{ // this is just a test, works as expected
+    console.log(stdout)
+})
+
+
+*/
+
+//console.log(__dirname)
+
+
+require('yargs')(process.argv.slice(2))
+  .usage('$0 <cmd> [args]')
+  .commandDir('cmds')
+  .demandCommand()
+  .help()
+  .argv
+
+
 function runCommand(first, second, third, fourth) {
   let app;
   const command = first;
 
   switch (command) {
-    case 'config':
+    case 'config': // DONE
       switch (second) {
-        case 'url':
+        case 'url':  // DONE (to test setURL)
           config.GeneratorURL = third;
           fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
             if (err) {
@@ -53,8 +56,8 @@ function runCommand(first, second, third, fourth) {
             console.log(`[${third}] Generator URL configured.`);
           });
           break;
-        case 'app':
-        case 'a':
+        case 'app':  // DONE
+        case 'a':   //DONE
           config.currentApp = third;
           fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
             if (err) {
@@ -64,8 +67,8 @@ function runCommand(first, second, third, fourth) {
             console.log(`[${third}] Application configured as default.`);
           });
           break;
-        case 'frontend':
-        case 'f':
+        case 'frontend': // DONE
+        case 'f': // DONE
           config.currentFrontend = third;
           fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
             if (err) {
@@ -75,7 +78,7 @@ function runCommand(first, second, third, fourth) {
             console.log(`[${third}] Frontend configured as default.`);
           });
           break;
-        case 'clear':
+        case 'clear': // DONE
           fs.writeFile(configPath, JSON.stringify({}, null, 2), function (err) {
             if (err) {
               console.error('Error: ', err);
@@ -84,7 +87,7 @@ function runCommand(first, second, third, fourth) {
             console.log('Configuration cleared.');
           });
           break;
-        case 'force':
+        case 'force': //DONE
           config.forceMode = !config.forceMode;
           fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
             if (err) {
@@ -95,7 +98,7 @@ function runCommand(first, second, third, fourth) {
           });
           break;
         default:
-          console.log(config);
+          console.log(config); // TODO print help or config by default?
           break;
       }
       break;
@@ -311,4 +314,9 @@ function runCommand(first, second, third, fourth) {
   }
 }
 
-runCommand(args._[0], args._[1], args._[2], args._[3], args._[4]);
+
+//console.log(...args._)
+//runCommand(args._[0], args._[1], args._[2], args._[3], args._[4]);
+
+
+
