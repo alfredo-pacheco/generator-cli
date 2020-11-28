@@ -1,8 +1,8 @@
 
-const { updateConfigFile } = requireFromRoot('config_file_controller')
+const { updateConfigFile } = requireFromRoot('configFileController')
 
 exports.command = 'app <name>'
-exports.desc = 'name for the project'
+exports.desc = 'set the app to work with from CLI'
 exports.aliases = ['app', 'a']
 exports.builder = {}
 exports.handler = function (argv) {

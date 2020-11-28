@@ -1,9 +1,16 @@
 
+const { get } = requireFromRoot('../http')
+
 exports.command = 'apps';
-exports.desc = 'show the apps';
+exports.desc = 'display existing apps';
 exports.aliases = ['a'];
 exports.builder = {};
 exports.handler = function (argv) {
-    const {name} = argv;
-    updateConfigFile({currentApp: name})
+    get('/Generator/GetApplications').then(apps => {
+        try {
+            console.log(apps.map(a => a.Name).join('\n'));
+        }catch(e){
+            console.error(e);
+        }
+    });
 }

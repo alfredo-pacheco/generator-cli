@@ -1,7 +1,7 @@
-const { updateConfigFile } = requireFromRoot('config_file_controller');
+const { updateConfigFile } = requireFromRoot('configFileController');
 
 exports.command = 'frontend <name>'
-exports.desc = 'define the frontend name for the project'
+exports.desc = 'set the frontend name to work with from CLI'
 exports.aliases = ['frontend', 'f']
 exports.builder = {}
 exports.handler = function (argv) {

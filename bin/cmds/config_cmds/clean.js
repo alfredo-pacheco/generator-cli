@@ -1,7 +1,7 @@
-const { cleanConfigFile } = requireFromRoot('config_file_controller')
+const { cleanConfigFile } = requireFromRoot('configFileController')
 
 exports.command = 'clean'
-exports.desc = 'clean the config file'
+exports.desc = 'clean the CLI config'
 exports.builder = {}
 exports.handler = function (argv) {
     cleanConfigFile()

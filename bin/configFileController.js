@@ -28,7 +28,7 @@ function updateConfigFile(moreContent){
     config = Object.assign(configFileContent, moreContent);      
     fs.writeFileSync(GENERATOR_CLI_CONFIG, JSON.stringify(config, null, 2));
 
-    console.log(GENERATOR_CLI_CONFIG, 'updated')
+    //console.log(GENERATOR_CLI_CONFIG, 'updated')
 }
 
 function cleanConfigFile(){

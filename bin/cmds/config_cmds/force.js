@@ -1,7 +1,7 @@
-const { updateConfigFile, getConfigFileContent } = requireFromRoot('config_file_controller')
+const { updateConfigFile, getConfigFileContent } = requireFromRoot('configFileController')
 
 exports.command = 'force';
-exports.desc = 'force to merge';
+exports.desc = 'toggles whether to overwrite generated resources';
 exports.aliases = ['f'];
 exports.builder = {};
 exports.handler = function () {
@@ -13,4 +13,5 @@ exports.handler = function () {
     forceMode = !forceMode;
 
     updateConfigFile({forceMode});
+    console.log(`[Force Mode] toggled to ${forceMode}`);
 }
