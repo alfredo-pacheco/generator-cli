@@ -1,27 +1,23 @@
-const { getConfigFileContent } = requireFromRoot('config_file_controller')
+const { getConfigFileContent } = requireFromRoot('configFileController')
 const { post } = requireFromRoot('../http');
 
 exports.command = 'entity <entityName> [app]'
-exports.desc = 'Create entity'
+exports.desc = 'create a new entity'
 exports.aliases = ['e']
-/*
-exports.builder = function (yargs) {
-  return yargs.commandDir('entity_cmds')
-}
-*/
+exports.builder = {};
+
 exports.handler = function (argv) {
-    console.log('executing entity command', argv);
-    let config = getConfigFileContent()
-    let force = argv.force || argv.f || config.forceMode;
-    app = argv.app || config.currentApp;
-    if(!app){
-      console.log("Application Name Required after entityName")
-      return;
-    } 
+    
+    const {forceMode, currentApp } = getConfigFileContent();
+
+    const force = new Boolean(argv.force || argv.f || forceMode);
+    const app = argv.app || currentApp;
+    
+    if (!app) return console.log('ups, app name is not defined and is needed (check config app)...');
 
     post(`/Generator/RunEntity/${app}/${argv.entityName}`, {
       force
     })
-      .then(() => console.log(`[${second}] Entity generated for Application: [${app}]`))
-      .catch(err => console.error(err));  
+    .then(() => console.log(`[${argv.entityName}] Entity generated for Application: [${app}]`))
+    .catch(console.error);  
 }

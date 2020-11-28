@@ -1,30 +1,25 @@
-const { getConfigFileContent } = requireFromRoot('config_file_controller')
+const { getConfigFileContent } = requireFromRoot('configFileController');
 const { post } = requireFromRoot('../http');
 
-exports.command = 'app [app]'
-exports.desc = 'configure specific resource'
-exports.aliases = ['a']
-/*
-exports.builder = function (yargs) {
-  return yargs.commandDir('app_cmds')
-}
-*/
+exports.command = 'app [app]';
+exports.desc = 'generates complete application';
+exports.aliases = ['a'];
+
+exports.builder = {};
+
 exports.handler = function (argv) {
-    console.log('executing app command', argv);
+  
+    const {forceMode,currentApp } = getConfigFileContent()
 
-    let config = getConfigFileContent()
-    let force = argv.force || argv.f || config.forceMode;
-    app = argv.app || config.currentApp;
+    const force = new Boolean(argv.force || argv.f || forceMode);
+    const app = argv.app || currentApp;
 
-    
-    if (!app) {
-      console.error(`Application Name Required`);
-      return;
-    }
-      post(`/Generator/RunApplication/${app}`, {
-        force
-      })
-        .then(() => console.log(`[${app}] Application generated.`))
-        .catch(err => console.error(err));
-    
+   if (!app) return console.log('ups, app name is not defined and is needed (check config app)...');
+
+    post(`/Generator/RunApplication/${app}`, {
+      force
+    })
+    .then(() => console.log(`[${app}] Application generated.`))
+    .catch(console.error);
+  
 }

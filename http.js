@@ -9,9 +9,14 @@ if (configFileContent) {
   cliConfig = JSON.parse(configFileContent);
 }
 
-const Request = async (method, endpoint, data, BaseURL) => {
+const Request = async (method, endpoint, data, BaseURL=cliConfig.GeneratorURL) => {
   // if (AuthService.auth == null) AuthService.fillAuthData();
   // if (!AuthService.auth || !AuthService.auth.user) throw 'User not signed in.';
+
+  if(!BaseURL) {
+   return Promise.reject(`Error: ${method} baseURL=${BaseURL} should be configured check (config url)`)
+    //throw new Error('baseURL should be configured check (config url)')
+  }
 
   const config = {
     method: method,
@@ -24,7 +29,9 @@ const Request = async (method, endpoint, data, BaseURL) => {
     body: null
   };
   if (['POST', 'PUT', 'DELETE'].includes(method)) config.body = JSON.stringify(data);
-  let response = await fetch((BaseURL || cliConfig.GeneratorURL) + endpoint, config);
+
+  let response = await fetch((BaseURL) + endpoint, config);
+  
   if (response) {
     if (!response.ok) throw await response.json();
     if (response.status == 403) console.log('Invalid Role.');
@@ -49,6 +56,3 @@ module.exports.post = async (endpoint, data, baseURL) => {
   return await Request('POST', endpoint, data, baseURL);
 };
 
-module.exports.setURL = url => {
-  cliConfig.GeneratorURL = url;
-};

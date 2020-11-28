@@ -1,30 +1,24 @@
-const { getConfigFileContent } = requireFromRoot('config_file_controller')
+const { getConfigFileContent } = requireFromRoot('configFileController')
 const { post } = requireFromRoot('../http');
 
-exports.command = 'component <componentName> [app]'
-exports.desc = 'create component'
-exports.aliases = ['c']
-/*
-exports.builder = function (yargs) {
-  return yargs.commandDir('component_cmds')
-}
-*/
+exports.command = 'component <componentName> [app]';
+exports.desc = 'generates existing component';
+exports.aliases = ['c'];
+
+exports.builder = {};
+
 exports.handler = function (argv) {
-    console.log('executing component command', argv);
 
-    let config = getConfigFileContent()
-    let force = argv.force || argv.f || config.forceMode;
-    app = argv.app || config.currentApp;
+    const {forceMode, currentApp} = getConfigFileContent();
+    const force = new Boolean(argv.force || argv.f || forceMode);
+    const app = argv.app || currentApp;
 
-    if(!app){
-      console.log("Application Name Required after componentName")
-      return;
-    } 
+    if (!app) return console.log('ups, app name is not defined and is needed (check config app)...');
       
-        post(`/Generator/RunComponent/${app}/${argv.componentName}`, {
-          force
-        })
-          .then(() => console.log(`[${argv.componentName}] Component generated for Application: [${app}]`))
-          .catch(err => console.error(err));
+    post(`/Generator/RunComponent/${app}/${argv.componentName}`, {
+      force
+    })
+    .then(() => console.log(`[${argv.componentName}] Component generated for Application: [${app}]`))
+    .catch(console.error);
       
 }
