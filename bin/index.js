@@ -16,6 +16,7 @@ if (getConfigFileContent.force){
 
 function main(commands){
   yargs(commands)
+    .wrap(100)
     .usage('$0 <cmd> [args]')
     .commandDir('cmds')
     .demandCommand(1)
