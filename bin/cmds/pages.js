@@ -7,8 +7,7 @@ exports.aliases = ['ps'];
 exports.builder = {};
 
 exports.handler = function (argv) {
-
-  const {forceMode, currentApp, currentFrontend } = getConfigFileContent();
+  const { forceMode, currentApp, currentFrontend } = getConfigFileContent();
 
   const force = new Boolean(argv.force || argv.f || forceMode);
   const app = argv.app || currentApp;
@@ -20,6 +19,6 @@ exports.handler = function (argv) {
   post(`/Generator/RunPages/${app}/${frontend}`, {
     force
   })
-  .then(() => console.log(`[${frontend}] All Pages generated for Application: [${app}]`))
-  .catch(console.error);
-}
+    .then(() => console.log(`[${frontend}] All Pages generated for Application: [${app}]`))
+    .catch(console.error);
+};

@@ -1,9 +1,9 @@
 const { getConfigFileContent } = requireFromRoot('configFileController');
 const { get } = requireFromRoot('../http');
 
-exports.command = 'djson [app]';
-exports.desc = 'get complete definition for a given application';
-exports.aliases = ['definition'];
+exports.command = 'gateways [app]';
+exports.desc = 'display existing gateways for a given application';
+exports.aliases = [];
 
 exports.builder = function (yargs) {
   const { currentApp } = getConfigFileContent();
@@ -18,9 +18,9 @@ exports.handler = function (argv) {
   const { app } = argv;
   if (!app) return console.log('ups, app name is not defined and is needed (check config app)...');
 
-  get(`/Generator/GetApplicationDJSON/${app}`).then(djson => {
+  get(`/Generator/GetGatewaysInApplication/${app}`).then(gateways => {
     try {
-      console.log(JSON.stringify(djson, null, 2));
+      console.log(gateways.map(a => a.Name).join('\n'));
     } catch (e) {
       console.error(e);
     }

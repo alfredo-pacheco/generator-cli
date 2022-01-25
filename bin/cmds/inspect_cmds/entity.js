@@ -1,13 +1,17 @@
 const { getConfigFileContent } = requireFromRoot('configFileController');
 const { get } = requireFromRoot('../http');
 
-exports.command = 'djson [app]';
-exports.desc = 'get complete definition for a given application';
-exports.aliases = ['definition'];
+exports.command = 'entity <name> [app]';
+exports.desc = 'inspect entity for a given application';
+exports.aliases = ['e'];
 
 exports.builder = function (yargs) {
   const { currentApp } = getConfigFileContent();
 
+  yargs.positional('name', {
+    describe: 'the entity name',
+    type: 'string'
+  });
   yargs.positional('app', {
     describe: 'the app name',
     type: 'string',
@@ -15,10 +19,12 @@ exports.builder = function (yargs) {
   });
 };
 exports.handler = function (argv) {
-  const { app } = argv;
+  const { name, app } = argv;
+
+  if (!name) return console.log('ups, entity name is not defined and is needed...');
   if (!app) return console.log('ups, app name is not defined and is needed (check config app)...');
 
-  get(`/Generator/GetApplicationDJSON/${app}`).then(djson => {
+  get(`/Generator/InspectEntity/${app}/${name}`).then(djson => {
     try {
       console.log(JSON.stringify(djson, null, 2));
     } catch (e) {
